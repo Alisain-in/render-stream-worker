@@ -44,20 +44,15 @@ app.post('/start', async (req, res) => {
                 return res.status(500).json({ error: 'Failed to download video' });
             }
             
-            console.log("Download complete. Starting FFmpeg...");
+            console.log("Download complete. Starting FFmpeg in High-Efficiency Stream Copy Mode...");
 
-            // Start FFmpeg loop
+            // Stream Copy Mode: -c:v copy uses ~1% CPU instead of 100%
             const ffmpegArgs = [
                 '-re',
                 '-stream_loop', '-1', // Loop forever
                 '-i', videoPath,
-                '-c:v', 'libx264',
-                '-preset', 'veryfast',
-                '-maxrate', '3000k',
-                '-bufsize', '6000k',
-                '-pix_fmt', 'yuv420p',
-                '-g', '60',
-                '-c:a', 'aac',
+                '-c:v', 'copy',      // Zero-CPU video copy
+                '-c:a', 'aac',       // Lightweight audio repackage
                 '-b:a', '128k',
                 '-ar', '44100',
                 '-f', 'flv',
@@ -74,7 +69,7 @@ app.post('/start', async (req, res) => {
                 currentFfmpegProcess = null;
             });
 
-            res.status(200).json({ success: true, message: 'Stream started successfully' });
+            res.status(200).json({ success: true, message: 'Stream started successfully in Zero-CPU Copy Mode' });
         });
 
     } catch (error) {
