@@ -1,17 +1,14 @@
-FROM node:18-bullseye-slim
+FROM node:20-alpine
 
-# Install FFmpeg and Python (for gdown)
-RUN apt-get update && apt-get install -y ffmpeg python3-pip curl && rm -rf /var/lib/apt/lists/*
-RUN pip3 install gdown --break-system-packages || pip3 install gdown
+# Install FFmpeg, Python3, pip, curl (fast and lightweight Alpine packages)
+RUN apk add --no-cache ffmpeg python3 py3-pip curl
+RUN pip3 install --no-cache-dir --break-system-packages gdown
 
-# Create app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm install --production
 
-# Bundle app source
 COPY . .
 
 EXPOSE 10000
