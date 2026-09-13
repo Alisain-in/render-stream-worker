@@ -10,7 +10,11 @@ app.use(cors());
 
 let currentFfmpegProcess = null;
 
-// Ping endpoint to keep Render awake
+// Root and Ping endpoints for health checks
+app.get('/', (req, res) => {
+    res.status(200).send('StreamerCore Worker is Online and Ready!');
+});
+
 app.get('/ping', (req, res) => {
     res.status(200).send('PONG');
 });
