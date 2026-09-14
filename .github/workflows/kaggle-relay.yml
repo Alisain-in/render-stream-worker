@@ -1,0 +1,32 @@
+name: 24/7 Cloud Engine Relay (Kaggle)
+
+on:
+  schedule:
+    - cron: '0 */11 * * *' # Auto-triggers every 11 hours
+  workflow_dispatch:        # Manual trigger button anytime
+
+jobs:
+  launch-kaggle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Kaggle CLI
+        run: pip install kaggle
+
+      - name: Configure Kaggle Token
+        run: |
+          mkdir -p ~/.kaggle
+          echo "KGAT_ead1857a27420ee626ebf25f4b19b792" > ~/.kaggle/access_token
+          chmod 600 ~/.kaggle/access_token
+
+      - name: Deploy & Start Cloud Engine on Kaggle
+        run: |
+          kaggle kernels push -p .
+          echo "✅ Cloud Engine successfully deployed and launched on Kaggle!"

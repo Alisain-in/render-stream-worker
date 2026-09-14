@@ -1,0 +1,10 @@
+{
+  "id": "alisain12/streamercore-cloud-engine",
+  "title": "StreamerCore Cloud Engine",
+  "code_file": "StreamerCore.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "false",
+  "enable_internet": "true"
+}
