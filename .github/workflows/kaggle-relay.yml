@@ -1,8 +1,8 @@
-﻿name: 24/7 Cloud Engine Relay (Kaggle)
+name: 24/7 Cloud Engine Relay (Kaggle)
 
 on:
   schedule:
-    - cron: '0 */11 * * *' # Auto-triggers every 11 hours
+    - cron: '0 */8 * * *' # Auto-triggers every 8 hours (well before 12h limit)
   workflow_dispatch:        # Manual trigger button anytime
 
 jobs:
