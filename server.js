@@ -41,8 +41,24 @@ function downloadVideo(videoUrl, videoPath) {
             try { fs.unlinkSync(videoPath); } catch (e) {}
         }
 
+        const isYouTube = videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be');
         const driveMatch = videoUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || videoUrl.match(/id=([a-zA-Z0-9_-]+)/);
         const driveId = driveMatch ? driveMatch[1] : null;
+
+        if (isYouTube) {
+            addLog(`Direct YouTube link detected: ${videoUrl}`);
+            const ytCmd = `yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best" "${videoUrl}" -o "${videoPath}"`;
+            addLog(`Running YouTube download: ${ytCmd}`);
+            return exec(ytCmd, { timeout: 300000 }, (ytErr, ytOut, ytErrOut) => {
+                if (fs.existsSync(videoPath) && fs.statSync(videoPath).size > 1024) {
+                    addLog(`YouTube download succeeded. Size: ${(fs.statSync(videoPath).size / (1024*1024)).toFixed(2)} MB`);
+                    return resolve(videoPath);
+                }
+                const errorMsg = `YouTube download failed. Stderr: ${ytErrOut || ytErr?.message}`;
+                addLog(errorMsg);
+                reject(new Error(errorMsg));
+            });
+        }
 
         let downloadCmd = '';
         if (driveId) {
